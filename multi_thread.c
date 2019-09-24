@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <pthread.h>
+#include <unistd.h>
 
 typedef struct __thread_obj__
 {
@@ -9,11 +10,12 @@ typedef struct __thread_obj__
 
 void thread_proc(void *param)
 {
-	pthread_obj obj = (pthread_obj);
+	int count = 0;
+	pthread_obj obj = (pthread_obj)param;
 	
 	while(1)
 	{
-		printf("I am thread %d\n", obj->id);
+		printf("I am thread %d, %d\n", obj->id, count++);
 		sleep(obj->delay);
 	}
 }
@@ -21,7 +23,7 @@ void thread_proc(void *param)
 thread_obj threadA;
 thread_obj threadB;
 
-int main(void)
+int main(int argc, char *argv[])
 {
     pthread_t idA, idB;
     int i,ret;
@@ -32,20 +34,22 @@ int main(void)
 	threadB.id = 200;
 	threadB.delay = 3;
 	
-    ret = pthread_create(&idA, NULL, (void *) thread_proc, $threadA);
+    ret = pthread_create(&idA, NULL, (void *) thread_proc, &threadA);
     if(ret!=0)
 	{
         printf ("Create pthread error!n");
-        exit (1);
+        return (1);
     }
-    pthread_join(idA, NULL);
+
     
 	ret = pthread_create(&idB, NULL, (void *) thread_proc, &threadB);
     if(ret!=0)
 	{
         printf ("Create pthread error!n");
-        exit (1);
+        return (1);
     }
+
+    pthread_join(idA, NULL);
     pthread_join(idB, NULL);
 	
 	return (0);
