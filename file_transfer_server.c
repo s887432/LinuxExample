@@ -36,6 +36,8 @@ void write_file(int sockfd)
         fprintf(fp, "%s", buffer);
         bzero(buffer, SIZE);
     }
+
+	fclose(fp);
     return;
     
 }
